@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.5)
+cmake_minimum_required(VERSION 3.10)  # at least 3.10 for C++17 support
 project(ros_impedance_controller)
 
 find_package(Eigen3 REQUIRED)
