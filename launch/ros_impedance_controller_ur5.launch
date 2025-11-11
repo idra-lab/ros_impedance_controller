@@ -106,9 +106,9 @@
 
 
         <!-- 5  - Loading the controllers (joint state publisher (install ros-kinetic-joint-state-controller) is necessary for robot_state publisher to compute the TFs) -->
-	<node if="$(arg use_torque_control)" name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
+	<node if="$(arg use_torque_control)" name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
 		output="screen" ns="/$(arg robot_name)"  args="joint_state_publisher $(arg torque_controllers)" />
-	<node unless="$(arg use_torque_control)" name="ros_impedance_controller" pkg="controller_manager" type="spawner" respawn="false"
+	<node unless="$(arg use_torque_control)" name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
 		output="screen" ns="/$(arg robot_name)"  args="joint_state_publisher $(arg position_controllers)" />
 
         <!--  rviz stuff -->
