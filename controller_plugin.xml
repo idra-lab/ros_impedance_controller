@@ -3,7 +3,7 @@
                    type="ros_impedance_controller::Controller"
 		   base_class_type="controller_interface::ControllerBase">
 		<description>
-                        This is the ros_impedance_controller controller, check the README.md for informations about this controller.
+                        This is the ros_impedance_controller controller
 		</description>
 	</class>
 </library>

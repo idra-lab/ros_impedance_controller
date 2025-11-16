@@ -318,41 +318,7 @@ void Controller::commandCallback(const sensor_msgs::JointState& msg)
         ROS_WARN("Wrong dimension!");
 }
 
-
-void Controller::baseGroundTruthCB(const nav_msgs::OdometryConstPtr &msg)
-{
-
-    //static tf::TransformBroadcaster br;
-    //tf::Transform w_transform_b;
-
-    //orientation of base frame
-/*
-    q_base.setX(msg->pose.pose.orientation.x);
-    q_base.setY(msg->pose.pose.orientation.y);
-    q_base.setZ(msg->pose.pose.orientation.z);
-    q_base.setW(msg->pose.pose.orientation.w);
-    //position of base frame
-    base_pos_w = tf::Vector3(msg->pose.pose.position.x,msg->pose.pose.position.y,msg->pose.pose.position.z);
-*/
-    //get twist
-/*
-    base_twist_w.linear.x= msg->twist.twist.linear.x;
-    base_twist_w.linear.y = msg->twist.twist.linear.y;
-    base_twist_w.linear.z = msg->twist.twist.linear.z;
-    base_twist_w.angular.x = msg->twist.twist.angular.x;
-    base_twist_w.angular.y = msg->twist.twist.angular.y;
-    base_twist_w.angular.z = msg->twist.twist.angular.z;
-*/
-
-    //the vector of the base is in the world frame, so to apply to the base frame I should rotate it to the base frame before
-    //tf::Vector3 world_origin_w(-msg->pose.pose.position.x,-msg->pose.pose.position.y,-msg->pose.pose.position.z);
-    //tf::Vector3 world_origin_b = tf::quatRotate(q_base.inverse(), world_origin_w);
-
-    //this is the transform from base to world to publish the world transform for rviz
-    //w_transform_b.setRotation(q_base.inverse());
-    //w_transform_b.setOrigin(world_origin_b);
-    //br.sendTransform(tf::StampedTransform(w_transform_b, ros::Time::now(), "/base_link", "/world" ));
-}
+ 
 
 
 
