@@ -50,12 +50,14 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
 
     hardware_interface::EffortJointInterface* eff_hw = robot_hw->get<hardware_interface::EffortJointInterface>();
 
+    // Get the effort joint interface
     if(!eff_hw)
     {
         ROS_ERROR("hardware_interface::EffortJointInterface not found");
         return false;
     }
-    
+
+    // Load joint list    
     if (!controller_nh.getParam("joints", joint_names_))
     {
         ROS_ERROR("No joints given in the namespace: %s.", controller_nh.getNamespace().c_str());
@@ -65,7 +67,7 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
          std::cout<< green<< "Found " <<joint_names_.size()<< " joints"<< reset <<std::endl;
     }
 
-     // Setting up handles:
+    // Create joint handles
     for ( int i = 0; i < joint_names_.size(); i++)
     {
 
@@ -201,18 +203,17 @@ bool Controller::init(hardware_interface::RobotHW* robot_hw,
         }
     }
 
-
     // Create the subscriber
     command_sub_ = root_nh.subscribe("/command", 1, &Controller::commandCallback, this, ros::TransportHints().tcpNoDelay());
 
-  
+    // Create publisher
+    effort_pid_pub = root_nh.advertise<EffortPid>("effort_pid", 1);
 
-
-    std::cout<< cyan<< "ROS_IMPEDANCE CONTROLLER: ROBOT NAME IS : "<< robot_name<<reset <<std::endl;
-     // Create the PID set service
+    // Create the PID set service
     set_pids_srv_ = param_node.advertiseService("/set_pids", &Controller::setPidsCallback, this);
 
-    effort_pid_pub = root_nh.advertise<EffortPid>("effort_pid", 1);
+    std::cout<< cyan<< "ROS_IMPEDANCE CONTROLLER: ROBOT NAME IS : "<< robot_name<<reset <<std::endl;
+    
     return true;
 }
 
@@ -305,41 +306,26 @@ bool Controller::setPidsCallback(set_pids::Request& req,
 
 void Controller::commandCallback(const sensor_msgs::JointState& msg)
 {
-
     if(joint_states_.size() == msg.position.size() && joint_states_.size() == msg.velocity.size() && joint_states_.size() == msg.effort.size())
     {
-            //des_joint_efforts_(i) = msg.data[i];
             des_joint_positions_ = Eigen::Map<const Eigen::VectorXd>(&msg.position[0],joint_states_.size());
             des_joint_velocities_ = Eigen::Map<const Eigen::VectorXd>(&msg.velocity[0],joint_states_.size());
             des_joint_efforts_ = Eigen::Map<const Eigen::VectorXd>(&msg.effort[0],joint_states_.size());
-    }
-
-    else
+    } else {
         ROS_WARN("Wrong dimension!");
+    }
 }
 
  
-
-
-
 void Controller::update(const ros::Time& time, const ros::Duration& period)
 {
 
-    //if task_period is smaller than sim max_step_size (in world file) period it is clamped to that value!!!!!
-    //std::cout<<period.toSec()<<std::endl;
-//    std::cout<<"des_joint_efforts_: " << des_joint_efforts_.transpose()<<std::endl;
-//    std::cout<<"des_joint_velocities_: " << des_joint_velocities_.transpose()<<std::endl;
-//    std::cout<<"des_joint_positions_: " << des_joint_positions_.transpose()<<std::endl;
-    // Write to the hardware interface
-    //(NB this is not the convention of ros but the convention that we define in ros_impedance_controller_XX.yaml!!!!
-    //std::cout << "-----------------------------------" << std::endl;
-    
-
-    
+    //NOTE: if task_period is smaller than simulator max_step_size (in world file) the variable period it is clamped to that value  
     EffortPid msg;
     msg.name.resize(joint_states_.size());
     msg.effort_pid.resize(joint_states_.size());
 
+    // Write to the hardware interface, according to convention that defined in ros_impedance_controller_XX.yaml 
     if (discrete_implementation_)
     {
         Ts = period.toSec();
@@ -368,8 +354,6 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
 
             joint_positions_old_[i] = joint_states_[i].getPosition();
         }
-
-
     } else{
         for (unsigned int i = 0; i < joint_states_.size(); i++)
         {      
@@ -378,19 +362,10 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
             measured_joint_velocity_(i) = joint_states_[i].getVelocity();
             double joint_pos_error = des_joint_positions_(i) - measured_joint_position_(i);
             double integral_action = integral_action_old_[i] + joint_i_gain_[i]*joint_pos_error*period.toSec();
-            //std::cout << "***** joint: "<< joint_names_[i] << std::endl;
-            //std::cout << "joint des:   "<< des_joint_positions_(i) << std::endl;
-            //std::cout << "joint pos:   "<< joint_states_[i].getPosition() << std::endl;
-            //std::cout << "wrap:        "<< measured_joint_position_(i) << std::endl;
-        
-            //std::cout << "effort pid des:  "<< des_joint_efforts_pids_(i) << std::endl;
-            //std::cout << "effort meas: "<< joint_states_[i].getEffort() << std::endl;
-        
             //compute PID
             des_joint_efforts_pids_(i) = joint_p_gain_[i]*(des_joint_positions_(i) -  measured_joint_position_(i) ) +
                                         joint_d_gain_[i]*(des_joint_velocities_(i) - measured_joint_velocity_(i) ) +
                                         integral_action;
-
             integral_action_old_[i] = integral_action;
 
             msg.name[i] = joint_names_[i];
@@ -400,8 +375,6 @@ void Controller::update(const ros::Time& time, const ros::Duration& period)
             
         }
     }
-
-
 
     effort_pid_pub.publish(msg);
 }
