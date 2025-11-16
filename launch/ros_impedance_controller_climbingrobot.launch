@@ -6,6 +6,9 @@
         <arg name="rviz_conf" default="$(find climbingrobot_description)/rviz/conf.rviz"/>
 	<arg name="task_period" default="0.001" />
 	<arg name="world_name" default="climbingrobot.world"/>
+	<!-- this is to find the models in ros_impedance_controller"-->
+	<env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find ros_impedance_controller)/worlds/models" />
+	
 
 	<arg name="spawn_x" default="0.0" />
 	<arg name="spawn_y" default="0.0" />

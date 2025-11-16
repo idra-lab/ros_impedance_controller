@@ -13,6 +13,9 @@
 	<arg name="task_period" default="0.004" />
 
 	<arg name="world_name" default="tavolo.world"/>
+	<!-- this is to find the models in ros_impedance_controller"-->
+	<env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find ros_impedance_controller)/worlds/models" />
+	
  	<arg name="position_controllers" value="joint_group_pos_controller" />
 	<arg name="torque_controllers" value="ros_impedance_controller" />
 

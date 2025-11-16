@@ -6,6 +6,9 @@
         <arg name="find_robot_description" value="$(eval find(robot_name+'_description'))"/>
         <arg name="rviz_conf" default="$(arg find_robot_description)/rviz/conf.rviz"/>
         <arg name="world_name" default="solo.world"/>
+        <!-- this is to find the models in ros_impedance_controller"-->
+	<env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find ros_impedance_controller)/worlds/models" />
+	
         <arg name="real_robot" default="false" />
         <arg name="go0_conf" default="home"/>
  
