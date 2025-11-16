@@ -26,6 +26,7 @@ add_message_files(
 add_service_files(
   FILES
   set_pids.srv
+  generic_float.srv
 )
 
 generate_messages(
