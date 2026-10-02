@@ -64,7 +64,7 @@
 
  	<!-- 2 Spawn the hardware interface -->
 	<group if="$(arg real_robot)">	   
-        <node name="robot_hardware_interface" pkg="$(arg robot_name)_hardware_interface" type="ros_control_node" respawn="false" output="screen"/>
+        <node name="robot_hardware_interface" pkg="$(arg robot_name)_hardware_interface" type="$(arg robot_name)_ros_control_node" respawn="false" output="screen"/>
     </group>
   	
 	<!-- 3 Loading the controllers into the controller manager -->

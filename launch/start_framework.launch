@@ -60,7 +60,7 @@
 
 	<group if="$(arg real_robot)">	
 	    <!-- 2 Spawn the hardware interface -->
-            <node name="robot_hardware_interface" pkg="$(arg robot_name)_hardware_interface" type="ros_control_node" respawn="false" />
+            <node name="robot_hardware_interface" pkg="$(arg robot_name)_hardware_interface" type="$(arg robot_name)_ros_control_node" respawn="false" />
         </group>
   	
 
