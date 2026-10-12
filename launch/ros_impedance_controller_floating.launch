@@ -9,6 +9,9 @@
 	<env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(find ros_impedance_controller)/worlds/models" />
 	
 	<arg name="real_robot" default="false" />
+	<!-- Network interface for hardware interfaces that bind to one (e.g. unitree_sdk2 on the Go2).
+	     Empty keeps the hardware interface default. -->
+	<arg name="network_interface" default="" />
 	<arg name="go0_conf" default="home"/>
 	<arg name="load_force_sensors" default="false"/>
 
@@ -64,7 +67,9 @@
 
  	<!-- 2 Spawn the hardware interface -->
 	<group if="$(arg real_robot)">	   
-        <node name="robot_hardware_interface" pkg="$(arg robot_name)_hardware_interface" type="$(arg robot_name)_ros_control_node" respawn="false" output="screen"/>
+        <node name="robot_hardware_interface" pkg="$(arg robot_name)_hardware_interface" type="$(arg robot_name)_ros_control_node" respawn="false" output="screen">
+			<param name="network_interface" value="$(arg network_interface)" if="$(eval arg('network_interface') != '')"/>
+		</node>
     </group>
   	
 	<!-- 3 Loading the controllers into the controller manager -->
