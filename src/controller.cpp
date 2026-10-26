@@ -275,7 +275,7 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                    res.ack = false;
                 }
 
-                if (joint_i_gain_[i] == 0)
+                if (joint_i_gain_[j] == 0)
                 {
                     use_integral_action_[j] = false;
                     T_i[j] = 0;
@@ -286,13 +286,13 @@ bool Controller::setPidsCallback(set_pids::Request& req,
                     T_i[j] = joint_p_gain_[j] / joint_i_gain_[j];
                 }
 
-                if (joint_p_gain_[i] == 0)
+                if (joint_p_gain_[j] == 0)
                 {
-                    T_d[i] = 0;
+                    T_d[j] = 0;
                 }
                 else
                 {
-                    T_d[i] = joint_d_gain_[i] / joint_p_gain_[i];
+                    T_d[j] = joint_d_gain_[j] / joint_p_gain_[j];
                 }
                 
 
