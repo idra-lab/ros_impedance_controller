@@ -2,7 +2,7 @@
 <launch>
 	<arg name="robot_name" default="go2" />
 	
-	<arg name="network_interface" default="enp0s31f6" />
+	<arg name="network_interface" default="enp11s0" />
 	
 	<arg name="rviz" default="true" />
 	<arg name="gui" default="true" />
